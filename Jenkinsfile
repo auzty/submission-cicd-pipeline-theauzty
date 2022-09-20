@@ -14,6 +14,7 @@ node {
         shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         sh 'docker build -t myimg .'
         sh 'echo "menjeda pipeline selama 20 detik"; sleep 20'
+        sh "echo ${ shortCommit }"
         //input(message: "sudahkan anda selesai?")
     }
 }
