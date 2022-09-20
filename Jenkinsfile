@@ -11,6 +11,7 @@ node {
         }
     }
     stage('Deploy') {
+        shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         sh 'docker build -t myimg .'
         sh 'echo "menjeda pipeline selama 20 detik"; sleep 20'
         //input(message: "sudahkan anda selesai?")
