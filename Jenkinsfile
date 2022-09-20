@@ -9,6 +9,8 @@ node {
         stage('Test') {
             sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
         }
-
+    }
+    stage('Deploy') {
+        sh 'docker build -t myimg .'
     }
 }
