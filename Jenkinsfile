@@ -12,8 +12,12 @@ node {
         }
     }
     stage('Deploy') {
-        sh(script: "docker build -t auzty/dicoding-submission:${ shortCommit } .",label: "Building Docker Images")
         sh(label: 'menjeda pipeline selama 20 detik', script: 'sleep 20')
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-yusuf') {
+            def customImage = docker.build("auzty/dicoding-submission:${shortCommit}")
+            /* Push the container to the custom Registry */
+            customImage.push()
+        }
         //input(message: "sudahkan anda selesai?")
     }
 }
