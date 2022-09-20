@@ -12,6 +12,7 @@ node {
     }
     stage('Deploy') {
         sh 'docker build -t myimg .'
-        input(message: "sudahkan anda selesai?")
+        sh 'sleep 20'
+        //input(message: "sudahkan anda selesai?")
     }
 }
