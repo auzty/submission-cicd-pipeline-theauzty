@@ -22,8 +22,10 @@ node {
             customImage.push()
         }
         // run the ssm command for deploying to ec2
-        def args = "-p 8080:8000"
-        docker.image('jwilder/whoami').withRun("${args}")
+        def envArgs = "-e AWS_ACCESS_KEY_ID=${credentials('AWS_ACCESS_KEY_ID')} -e AWS_SECRET_ACCESS_KEY=${credentials('AWS_SECRET_ACCESS_KEY')} -e AWS_DEFAULT_REGION=ap-southeast-1"
+        docker.image('amazon/aws-cli').withRun("${envArgs}"){
+            sh 'ssm send-command --instance-ids i-0c39c6cd8974fa775 --document-name "AWS-RunShellScript" --parameters \'{"commands": ["#!/bin/bash","docker rm -f dicodingsubmission","docker run --name dicodingsubmission -d ${shortCommit}"] }\''
+        }
 
         //input(message: "sudahkan anda selesai?")
     }
