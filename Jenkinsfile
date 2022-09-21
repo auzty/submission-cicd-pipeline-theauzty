@@ -1,7 +1,6 @@
 node {
     checkout scm
     shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-    kelas
     docker.image('python:2-alpine').inside {
         stage('Build') {
             sh 'python -m py_compile sources/add2vals.py sources/calc.py'
