@@ -11,6 +11,9 @@ node {
             sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
         }
     }
+    stage('Manual Approval') {
+        input(message: "Lanjutkan ke tahap Deploy?")
+    }
     stage('Deploy') {
         sh(label: 'menjeda pipeline selama 20 detik', script: 'sleep 20')
         docker.withRegistry('https://registry.hub.docker.com', 'docker-yusuf') {
