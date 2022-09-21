@@ -21,6 +21,10 @@ node {
             /* Push the container to the custom Registry */
             customImage.push()
         }
+        // run the ssm command for deploying to ec2
+        def args = "-p 8080:8000"
+        docker.image('jwilder/whoami').withRun("${args}")
+
         //input(message: "sudahkan anda selesai?")
     }
 }
