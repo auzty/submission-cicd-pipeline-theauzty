@@ -17,7 +17,7 @@ node {
         input(message: "Lanjutkan ke tahap Deploy?")
     }
     stage('Deploy') {
-        sh(label: 'menjeda pipeline selama 20 detik', script: 'sleep 2')
+        sh(label: 'menjeda pipeline selama 1 menit (60 detik)', script: 'sleep 60')
         docker.withRegistry('https://registry.hub.docker.com', 'docker-yusuf') {
             def customImage = docker.build("auzty/dicoding-submission:${shortCommit}")
             /* Push the container to the custom Registry */
@@ -31,11 +31,5 @@ node {
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'aws-key', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY']]) {
             AWS("--region=ap-southeast-1 ssm send-command --instance-ids i-0c39c6cd8974fa775 --document-name \"AWS-RunShellScript\" --parameters \'{\"commands\": [\"#!/bin/bash\",\"docker rm -f dicodingsubmission\",\"docker run --name dicodingsubmission -d auzty/dicoding-submission:${shortCommit}\"] }\'")
         }
-        //docker.image('amazon/aws-cli').inside{
-        //    sh(label: "check aws version", script: '/usr/local/bin/aws --version')
-            //sh 'aws ssm send-command --instance-ids i-0c39c6cd8974fa775 --document-name "AWS-RunShellScript" --parameters \'{"commands": ["#!/bin/bash","docker rm -f dicodingsubmission","docker run --name dicodingsubmission -d ${shortCommit}"] }\''
-        //}
-
-        //input(message: "sudahkan anda selesai?")
     }
 }
