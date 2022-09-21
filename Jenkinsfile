@@ -1,3 +1,5 @@
+@Library('github.com/releaseworks/jenkinslib') _
+
 node {
     checkout scm
     shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
@@ -25,10 +27,14 @@ node {
         awsKey = credentials('AWS_ACCESS_KEY_ID')
         awsSecret = credentials('AWS_SECRET_ACCESS_KEY')
         def envArgs = "-e AWS_ACCESS_KEY_ID=${awsKey} -e AWS_SECRET_ACCESS_KEY=${awsSecret} -e AWS_DEFAULT_REGION=ap-southeast-1"
-        docker.image('amazon/aws-cli').inside{
-            sh(label: "check aws version", script: '/usr/local/bin/aws --version')
-            //sh 'aws ssm send-command --instance-ids i-0c39c6cd8974fa775 --document-name "AWS-RunShellScript" --parameters \'{"commands": ["#!/bin/bash","docker rm -f dicodingsubmission","docker run --name dicodingsubmission -d ${shortCommit}"] }\''
+
+        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'aws-key', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+            AWS("--region=ap-southeast-1 ssm send-command --instance-ids i-0c39c6cd8974fa775 --document-name "AWS-RunShellScript" --parameters \'{\"commands\": [\"#!/bin/bash\",\"docker rm -f dicodingsubmission\",\"docker run --name dicodingsubmission -d ${shortCommit}\"] }\'")
         }
+        //docker.image('amazon/aws-cli').inside{
+        //    sh(label: "check aws version", script: '/usr/local/bin/aws --version')
+            //sh 'aws ssm send-command --instance-ids i-0c39c6cd8974fa775 --document-name "AWS-RunShellScript" --parameters \'{"commands": ["#!/bin/bash","docker rm -f dicodingsubmission","docker run --name dicodingsubmission -d ${shortCommit}"] }\''
+        //}
 
         //input(message: "sudahkan anda selesai?")
     }
