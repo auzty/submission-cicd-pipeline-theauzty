@@ -25,8 +25,8 @@ node {
         awsKey = credentials('AWS_ACCESS_KEY_ID')
         awsSecret = credentials('AWS_SECRET_ACCESS_KEY')
         def envArgs = "-e AWS_ACCESS_KEY_ID=${awsKey} -e AWS_SECRET_ACCESS_KEY=${awsSecret} -e AWS_DEFAULT_REGION=ap-southeast-1"
-        docker.image('python:3-alpine').inside{
-            sh 'pip3 install awscli'
+        docker.image('amazon/aws-cli').inside{
+            sh(label: "check aws version", script: 'aws --version')
             //sh 'aws ssm send-command --instance-ids i-0c39c6cd8974fa775 --document-name "AWS-RunShellScript" --parameters \'{"commands": ["#!/bin/bash","docker rm -f dicodingsubmission","docker run --name dicodingsubmission -d ${shortCommit}"] }\''
         }
 
